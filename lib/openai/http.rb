@@ -76,7 +76,7 @@ module OpenAI
         "Content-Type" => "application/json",
         "Authorization" => "Bearer #{OpenAI.configuration.access_token}",
         "OpenAI-Organization" => OpenAI.configuration.organization_id
-      }
+      }.merge(OpenAI.configuration.extra_headers)
     end
 
     def multipart_parameters(parameters)
