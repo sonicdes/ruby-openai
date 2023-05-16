@@ -64,6 +64,7 @@ module OpenAI
 
     def conn(multipart: false)
       Faraday.new do |f|
+        f.adapter OpenAI.configuration.adapter
         f.options[:timeout] = OpenAI.configuration.request_timeout
         f.request(:multipart) if multipart
       end
