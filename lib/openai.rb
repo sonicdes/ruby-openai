@@ -15,7 +15,7 @@ module OpenAI
 
   class Configuration
     attr_writer :access_token
-    attr_accessor :api_version, :organization_id, :uri_base, :request_timeout, :adapter
+    attr_accessor :api_version, :organization_id, :uri_base, :request_timeout, :adapter, :extra_headers
 
     DEFAULT_API_VERSION = "v1".freeze
     DEFAULT_URI_BASE = "https://api.openai.com/".freeze

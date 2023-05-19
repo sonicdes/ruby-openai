@@ -10,12 +10,14 @@ RSpec.describe OpenAI do
     let(:custom_uri_base) { "ghi789" }
     let(:custom_request_timeout) { 25 }
     let(:custom_adapter) { :httpx }
+    let(:extra_headers) { { "User-Agent" => "OpenAI Ruby Gem #{OpenAI::VERSION}" } }
 
     before do
       OpenAI.configure do |config|
         config.access_token = access_token
         config.api_version = api_version
         config.organization_id = organization_id
+        config.extra_headers = extra_headers
       end
     end
 
@@ -25,6 +27,7 @@ RSpec.describe OpenAI do
       expect(OpenAI.configuration.organization_id).to eq(organization_id)
       expect(OpenAI.configuration.uri_base).to eq("https://api.openai.com/")
       expect(OpenAI.configuration.request_timeout).to eq(120)
+      expect(OpenAI.configuration.extra_headers).to eq(extra_headers)
     end
 
     context "without an access token" do
@@ -51,6 +54,7 @@ RSpec.describe OpenAI do
         expect(OpenAI.configuration.uri_base).to eq(custom_uri_base)
         expect(OpenAI.configuration.request_timeout).to eq(custom_request_timeout)
         expect(OpenAI.configuration.adapter).to eq(custom_adapter)
+        expect(OpenAI.configuration.extra_headers).to eq(extra_headers)
       end
     end
   end
