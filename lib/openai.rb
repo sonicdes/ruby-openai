@@ -28,6 +28,7 @@ module OpenAI
       @uri_base = DEFAULT_URI_BASE
       @request_timeout = DEFAULT_REQUEST_TIMEOUT
       @adapter = Faraday.default_adapter
+      @extra_headers = {}
     end
 
     def access_token
