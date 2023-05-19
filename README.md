@@ -91,6 +91,16 @@ OpenAI.configure do |config|
 end
 ```
 
+#### Choosing non-default Faraday adapter
+
+You can choose your a Faraday adapter other than the default Net:HTTP, which can potentially improve performance depending on your workload. For a list of available adapters check out [Awesome Faraday](https://github.com/lostisland/awesome-faraday/#adapters):
+
+```ruby
+OpenAI.configure do |config|
+    config.adapter = :httpx
+end
+```
+
 ### Models
 
 There are different models that can be used to generate text. For a full list and to retrieve information about a single model:
