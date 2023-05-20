@@ -55,13 +55,20 @@ module OpenAI
     #
     # Helicone sometimes sends response JSON in two chunks, we track them using `incomplete_chunk`.
     def to_json_stream(user_proc:)
-      incomplete_chunk = ""
+      @incomplete_chunk = ""
+      regexp = /(?:data|error): (\{.*\})/i
       proc do |chunk, _|
-        chunk.prepend incomplete_chunk 
-        json = chunk.scan(/(?:data|error): (\{.*\})/i).flatten
-        if json.empty?
-          incomplete_chunk = chunk
-          next
+        json = []
+        case chunk
+        when regexp
+          json = chunk.scan(regexp).flatten
+          @incomplete_chunk = ""
+        when /data: \[DONE\]/
+          # Some way to handle the end of stream
+        when (/^data: / || /^error: /)
+          @incomplete_chunk = chunk
+        when /.*\}$/
+          json = (@incomplete_chunk + chunk).scan(regexp).flatten
         end
 
         json.each do |data|
@@ -69,7 +76,6 @@ module OpenAI
         rescue JSON::ParserError
           # Ignore invalid JSON.
         end
-        incomplete_chunk = ""
       end
     end
 
