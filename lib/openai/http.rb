@@ -52,13 +52,24 @@ module OpenAI
     #
     # @param user_proc [Proc] The inner proc to call for each JSON object in the chunk.
     # @return [Proc] An outer proc that iterates over a raw stream, converting it to JSON.
+    #
+    # Helicone sometimes sends response JSON in two chunks, we track them using `incomplete_chunk`.
     def to_json_stream(user_proc:)
+      incomplete_chunk = ""
       proc do |chunk, _|
-        chunk.scan(/(?:data|error): (\{.*\})/i).flatten.each do |data|
+        chunk.prepend incomplete_chunk 
+        json = chunk.scan(/(?:data|error): (\{.*\})/i).flatten
+        if json.empty?
+          incomplete_chunk = chunk
+          next
+        end
+
+        json.each do |data|
           user_proc.call(JSON.parse(data))
         rescue JSON::ParserError
           # Ignore invalid JSON.
         end
+        incomplete_chunk = ""
       end
     end
 
